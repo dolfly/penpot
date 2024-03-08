@@ -99,6 +99,10 @@
     (when (some? selection)
       selection)))
 
+(defn ^:export getCurrentTheme
+  []
+  (get-in @st/state [:profile :theme]))
+
 ;; (defonce listeners
 ;;   (atom {}))
 
@@ -135,5 +139,13 @@
                          new-selection (get-in new-val [:workspace-local :selected])]
                      (when-not (identical? old-selection new-selection)
                        (f new-selection)))))
+
+      "theme"
+      (add-watch st/state key
+                 (fn [_ _ old-val new-val]
+                   (let [old-theme (get-in old-val [:profile :theme])
+                         new-theme (get-in new-val [:profile :theme])]
+                     (when-not (identical? old-theme new-theme)
+                       (f new-theme)))))
       )))
 
