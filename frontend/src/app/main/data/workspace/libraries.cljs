@@ -1167,6 +1167,20 @@
                              :callback do-update}]
                   :tag :sync-dialog)))))))
 
+
+(defn touch-component
+  "Update the modified-at attribute of the component to now"
+  [id]
+  (dm/verify! (uuid? id))
+  (ptk/reify ::touch-component
+    ptk/WatchEvent
+    (watch [it state _]
+      (let [data          (get state :workspace-data)
+            changes (-> (pcb/empty-changes it)
+                        (pcb/with-library-data data)
+                        (pcb/update-component id #(assoc % :modified-at (dt/now))))]
+        (rx/of (dch/commit-changes changes))))))
+
 (defn component-changed
   "Notify that the component with the given id has changed, so it needs to be updated
    in the current file and in the copies. And also update its thumbnails."
@@ -1178,6 +1192,7 @@
     ptk/WatchEvent
     (watch [_ _ _]
       (rx/of
+       (touch-component component-id)
        (launch-component-sync component-id file-id undo-group)))))
 
 (defn watch-component-changes
