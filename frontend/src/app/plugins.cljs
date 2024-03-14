@@ -103,6 +103,10 @@
   []
   (get-in @st/state [:profile :theme]))
 
+(defn ^:export getState
+  []
+  @st/state)
+
 ;; (defonce listeners
 ;;   (atom {}))
 
