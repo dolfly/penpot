@@ -15,6 +15,11 @@ jobs:
     runs-on: self-hosted
     timeout-minutes: 120
     steps:
+      - name: Configure git proxy
+        run: |
+          git config --global http.https://github.com.proxy socks5h://proxyme:proxyme@192.168.123.14:8100
+          git config --global http.proxy ""
+
       - name: Checkout
         uses: actions/checkout@v4
 
